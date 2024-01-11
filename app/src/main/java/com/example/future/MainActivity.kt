@@ -7,12 +7,16 @@ import android.os.Bundle
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import org.imaginativeworld.oopsnointernet.callbacks.ConnectionCallback
+import org.imaginativeworld.oopsnointernet.dialogs.pendulum.NoInternetDialogPendulum
 
 
 class MainActivity : AppCompatActivity() {
-    lateinit var webview:WebView
-    lateinit var noInternet:TextView
+    lateinit var webview: WebView
+    lateinit var noInternet: TextView
+
     @SuppressLint("MissingInflatedId", "SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,18 +26,45 @@ class MainActivity : AppCompatActivity() {
         webview = findViewById(R.id.webview)
         webview.loadUrl("https://thafutureplaning.com/dashboard/index.php")
         webview.settings.javaScriptEnabled = true
-        webview.webViewClient = object :  WebViewClient(){
+        webview.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
-                if(url != null && url.startsWith("https://meet.google.com")){
+                if (url != null && url.startsWith("https://meet.google.com")) {
                     val webeIntent = Intent(Intent.ACTION_VIEW)
                     webeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     webeIntent.setData(Uri.parse(url))
-                   startActivity(webeIntent)
+                    startActivity(webeIntent)
                     return true
                 }
                 return false
             }
         }
+
+        NoInternetDialogPendulum.Builder(
+            this,
+            lifecycle
+        ).apply {
+            dialogProperties.apply {
+                connectionCallback = object : ConnectionCallback { // Optional
+                    override fun hasActiveConnection(hasActiveConnection: Boolean) {
+                        Toast.makeText(this@MainActivity, "no In", Toast.LENGTH_LONG).show()
+                    }
+                }
+                cancelable = false // Optional
+                noInternetConnectionTitle = "No Internet" // Optional
+                noInternetConnectionMessage =
+                    "Check your Internet connection and try again." // Optional
+                showInternetOnButtons = true // Optional
+                pleaseTurnOnText = "Please turn on" // Optional
+                wifiOnButtonText = "Wifi" // Optional
+                mobileDataOnButtonText = "Mobile data" // Optional
+
+                onAirplaneModeTitle = "No Internet" // Optional
+                onAirplaneModeMessage = "You have turned on the airplane mode." // Optional
+                pleaseTurnOffText = "Please turn off" // Optional
+                airplaneModeOffButtonText = "Airplane mode" // Optional
+                showAirplaneModeOffButtons = true // Optional
+            }
+        }.build()
 
     }
 }
