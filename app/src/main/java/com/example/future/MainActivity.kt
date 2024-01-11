@@ -4,8 +4,10 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -16,15 +18,17 @@ import org.imaginativeworld.oopsnointernet.dialogs.pendulum.NoInternetDialogPend
 class MainActivity : AppCompatActivity() {
     lateinit var webview: WebView
     lateinit var noInternet: TextView
+    lateinit var noLayout: LinearLayout
 
-    @SuppressLint("MissingInflatedId", "SetJavaScriptEnabled")
+    @SuppressLint("MissingInflatedId", "SetJavaScriptEnabled", "SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         noInternet = findViewById(R.id.noInternet)
         webview = findViewById(R.id.webview)
-        webview.loadUrl("https://thafutureplaning.com/dashboard/index.php")
+        noLayout = findViewById(R.id.noLayout)
+        webview.loadUrl("https://thafutureplaning.com")
         webview.settings.javaScriptEnabled = true
         webview.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
@@ -46,7 +50,31 @@ class MainActivity : AppCompatActivity() {
             dialogProperties.apply {
                 connectionCallback = object : ConnectionCallback { // Optional
                     override fun hasActiveConnection(hasActiveConnection: Boolean) {
-                        Toast.makeText(this@MainActivity, "no In", Toast.LENGTH_LONG).show()
+                        try {
+
+                            if (hasActiveConnection) {
+                                runOnUiThread {
+                                    webview.setVisibility(View.VISIBLE);
+                                    noLayout.setVisibility(View.GONE);
+                                    webview.loadUrl("https://thafutureplaning.com")
+                                }
+
+
+                            } else {
+                                runOnUiThread {
+
+                                    webview.setVisibility(View.GONE);
+                                    noLayout.setVisibility(View.VISIBLE);
+                                }
+
+                            }
+                        }catch ( e:Exception){
+                            Toast.makeText(this@MainActivity,e.message,Toast.LENGTH_LONG).show()
+
+                        }
+
+
+
                     }
                 }
                 cancelable = false // Optional
