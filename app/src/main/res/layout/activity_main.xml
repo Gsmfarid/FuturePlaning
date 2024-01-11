@@ -24,7 +24,9 @@
             android:layout_height="match_parent"
             android:layout_gravity="center|center_vertical"
             android:gravity="center"
-            android:text="You can not connect with future planning"
+            android:text="Please Wait....."
+            android:textSize="40sp"
+            android:textStyle="bold"
             android:textAlignment="center" />
     </LinearLayout>
 

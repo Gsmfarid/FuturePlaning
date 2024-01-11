@@ -28,20 +28,6 @@ class MainActivity : AppCompatActivity() {
         noInternet = findViewById(R.id.noInternet)
         webview = findViewById(R.id.webview)
         noLayout = findViewById(R.id.noLayout)
-        webview.loadUrl("https://thafutureplaning.com")
-        webview.settings.javaScriptEnabled = true
-        webview.webViewClient = object : WebViewClient() {
-            override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
-                if (url != null && url.startsWith("https://meet.google.com")) {
-                    val webeIntent = Intent(Intent.ACTION_VIEW)
-                    webeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    webeIntent.setData(Uri.parse(url))
-                    startActivity(webeIntent)
-                    return true
-                }
-                return false
-            }
-        }
 
         NoInternetDialogPendulum.Builder(
             this,
@@ -52,11 +38,27 @@ class MainActivity : AppCompatActivity() {
                     override fun hasActiveConnection(hasActiveConnection: Boolean) {
                         try {
 
+
                             if (hasActiveConnection) {
                                 runOnUiThread {
                                     webview.setVisibility(View.VISIBLE);
                                     noLayout.setVisibility(View.GONE);
                                     webview.loadUrl("https://thafutureplaning.com")
+                                    webview.settings.javaScriptEnabled = true
+                                    webview.webViewClient = object : WebViewClient() {
+                                        override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
+                                            if (url != null && url.startsWith("https://meet.google.com")) {
+                                                val webeIntent = Intent(Intent.ACTION_VIEW)
+                                                webeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                                webeIntent.setData(Uri.parse(url))
+                                                startActivity(webeIntent)
+                                                return true
+                                            }
+                                            return false
+                                        }
+
+
+                                    }
                                 }
 
 
